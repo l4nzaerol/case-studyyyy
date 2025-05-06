@@ -1,0 +1,53 @@
+/* Import a modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Card styling */
+.gantt-card {
+  background: #1e1e2f;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Header */
+.gantt-header {
+  background: linear-gradient(135deg, #3a3a5a, #2b2b40);
+}
+
+/* Scroll container */
+.gantt-scroll {
+  max-height: 550px;
+  overflow-x: auto;
+  overflow-y: auto;
+  background: #f8f9fa;
+  padding: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Add glow on hover for rows */
+.gantt-scroll .task-list-header, 
+.gantt-scroll .task-list-table {
+  background: #f8f9fa;
+}
+
+.task-name:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Custom scrollbar */
+.gantt-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+.gantt-scroll::-webkit-scrollbar-thumb {
+  background-color: #6c757d;
+  border-radius: 8px;
+}
+.gantt-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

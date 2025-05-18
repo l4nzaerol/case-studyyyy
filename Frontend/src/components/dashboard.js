@@ -60,7 +60,7 @@ const Dashboard = ({ onLogout }) => {
   return (
     <div className="container py-4 dashboard">
       <div className="mb-5 text-center">
-        <h1 className="fw-bold display-5 text-primary">Kuya Koy's Project Management</h1>
+        <h1 className="fw-bold display-5 text-primary">Klick Inc. Project Management System</h1>
         <p className="lead text-muted">Track your progress, manage your tasks, and stay on top of your work.</p>
       </div>
 

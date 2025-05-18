@@ -127,12 +127,12 @@ const TaskList = () => {
                   <td className="text-center">
                     <div className="btn-group btn-group-sm">
                       <Link to={`/tasks/${task.id}`} className="btn btn-outline-info">
-                        <i className="bi bi-eye"> View Task</i>
+                        <i className="bi bi-eye"> View Task </i>
                       </Link>
                       {user && project && user.id === project.user_id && (
                         <>
                           <Link to={`/tasks/${task.id}/edit`} className="btn btn-outline-warning">
-                            <i className="bi bi-pencil-square"></i>
+                            <i className=" bi bi-pencil-square"></i>
                           </Link>
                           <button
                             className="btn btn-outline-danger"

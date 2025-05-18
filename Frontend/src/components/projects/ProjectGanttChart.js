@@ -2,7 +2,7 @@ import React from 'react';
 import { Gantt, ViewMode } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProjectGanttChart.css'; // custom styles
+import './ProjectGanttChart.css';
 
 const ProjectGanttChart = ({ tasks }) => {
   if (!Array.isArray(tasks)) {
@@ -43,22 +43,22 @@ const ProjectGanttChart = ({ tasks }) => {
   }
 
   return (
-    <div className="container mt-5">
-      <div className="gantt-card custom-shadow">
-        <div className="gantt-header text-white px-4 py-3">
-          <h4 className="fw-bold mb-0">🗓️ Project Timeline Overview</h4>
-        </div>
-        <div className="gantt-body">
-          <div className="gantt-scroll">
-            <Gantt
-              tasks={ganttTasks}
-              viewMode={ViewMode.Day}
-              locale="en"
-              listCellWidth="220px"
-              barProgressColor="#0d6efd"
-              barBackgroundColor="#6c757d"
-            />
-          </div>
+    <div className="gantt-card">
+      <div className="gantt-header text-white px-4 py-3">
+        <h4 className="fw-bold mb-0">🗓️ Project Timeline Overview</h4>
+      </div>
+      <div className="gantt-body">
+        <div className="gantt-scroll">
+          <Gantt
+            tasks={ganttTasks}
+            viewMode={ViewMode.Day}
+            locale="en"
+            listCellWidth="220px"
+            barProgressColor="#0d6efd"
+            barBackgroundColor="#adb5bd"
+            fontSize="14"
+            columnWidth={60}
+          />
         </div>
       </div>
     </div>

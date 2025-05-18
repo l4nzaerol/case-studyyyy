@@ -59,7 +59,7 @@ const Navigation = ({ user, onLogout }) => {
 
           {/* Centered brand */}
           <div className="mx-auto">
-            <Link className="navbar-brand text-primary title-centered" to="/">Kuya Koy's PMS</Link>
+            <Link className="navbar-brand text-primary title-centered" to="/"></Link>
           </div>
 
           {/* Notifications and logout on the right */}

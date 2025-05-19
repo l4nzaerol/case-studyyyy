@@ -75,41 +75,80 @@ const ProjectDetail = () => {
     <div className="container py-4">
       <div className="row g-4">
       <div className="col-lg-4">
-  <div className="card shadow-sm">
-    <div className="card-body">
-      <h4 className="card-title text-primary">{project.name}</h4>
-      <p className="text-muted">{project.description || "No description"}</p>
-      <p><strong>Status:</strong> <span className={`badge bg-${getStatusBadge(project.status)}`}>{project.status}</span></p>
-      <p><strong>Start:</strong> {new Date(project.start_date).toLocaleDateString()}</p>
-      <p><strong>Due:</strong> {project.due_date ? new Date(project.due_date).toLocaleDateString() : "Not set"}</p>
-      <div className="d-flex flex-wrap gap-2 mt-3">
-        <Link to="/projects" className="btn btn-outline-secondary btn-sm">Back</Link>
-        {isOwner && (
-          <>
-            <Link to={`/projects/${id}/edit`} className="btn btn-warning btn-sm">Edit</Link>
-            <button className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
-          </>
-        )}
+      <div className="card shadow-sm border-0 mb-4 p-4 bg-white">
+  <div className="row align-items-center">
+    <div className="col-md-8">
+      <h2 className="text-primary fw-bold mb-2">
+        <i className="bi bi-kanban-fill me-2 text-dark"></i>{project.name}
+      </h2>
+      <p className="mb-1 text-muted">{project.description || "No description provided."}</p>
+      <div className="small text-secondary">
+        <span className="me-3"><strong>Status:</strong> <span className={`badge bg-${getStatusBadge(project.status)}`}>{project.status}</span></span>
+        <span className="me-3"><div></div>
+          <strong>Start:</strong> {new Date(project.start_date).toLocaleDateString()}</span>
+        <span><strong>Due:</strong> {project.due_date ? new Date(project.due_date).toLocaleDateString() : "Not set"}</span>
       </div>
     </div>
-  </div>
-
-  <div className="card mt-4 shadow-sm">
-    <div className="card-body">
-      <h5 className="text-dark">Budget Overview</h5>
-      <p><strong>Budget:</strong> ₱{Number(project.budget || 0).toFixed(2)}</p>
-      <p><strong>Spent:</strong> ₱{actualCost.toFixed(2)}</p>
-      <p><strong>Remaining:</strong> ₱{(project.budget - actualCost).toFixed(2)}</p>
-      <p><strong>Status:</strong> {actualCost > project.budget ? <span className="text-danger fw-bold">Over Budget</span> : <span className="text-success fw-bold">Within Budget</span>}</p>
+    <div className="col-md-4 d-flex justify-content-md-end justify-content-start mt-3 mt-md-0 gap-2">
+      <Link to="/projects" className="btn btn-outline-secondary btn-sm">Back</Link>
       {isOwner && (
-        <div className="d-grid gap-2 mt-3">
-          <Link to={`/projects/${id}/expenditures`} className="btn btn-outline-primary btn-sm">View Expenditures</Link>
-          <Link to={`/projects/${id}/expenditures/add`} className="btn btn-outline-success btn-sm">Add Expenditure</Link>
-          <Link to={`/projects/${id}/report`} className="btn btn-outline-dark btn-sm">Project Report</Link>
-        </div>
+        <>
+          <Link to={`/projects/${id}/edit`} className="btn btn-warning btn-sm">Edit</Link>
+          <button className="btn btn-danger btn-sm" onClick={handleDelete}>Delete</button>
+        </>
       )}
     </div>
   </div>
+</div>
+
+
+<div className="card mt-4 shadow border-0">
+  <div className="card-header bg-light d-flex align-items-center justify-content-between">
+    <h6 className="mb-0 text-dark"><i className="bi bi-wallet2 me-2 text-primary"></i> Budget Overview</h6>
+  </div>
+  <div className="card-body">
+    <div className="row align-items-center mb-3">
+      <div className="col-6">
+        <p className="mb-1 text-muted">Total Budget</p>
+        <h5 className="fw-bold text-dark">₱{Number(project.budget || 0).toLocaleString()}</h5>
+      </div>
+      <div className="col-6 text-end">
+        <p className="mb-1 text-muted">Spent</p>
+        <h5 className="fw-bold text-danger">₱{actualCost.toLocaleString()}</h5>
+      </div>
+    </div>
+
+    <div className="progress mb-3" style={{ height: '20px' }}>
+      <div
+        className={`progress-bar ${actualCost > project.budget ? 'bg-danger' : 'bg-success'}`}
+        style={{ width: `${Math.min((actualCost / (project.budget || 1)) * 100, 100)}%` }}
+        role="progressbar"
+        aria-valuenow={(actualCost / (project.budget || 1)) * 100}
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        {Math.round((actualCost / (project.budget || 1)) * 100)}%
+      </div>
+    </div>
+
+    <div className="d-flex justify-content-between small text-muted">
+      <span>Remaining: <strong className="text-dark">₱{Math.max((project.budget - actualCost), 0).toLocaleString()}</strong></span>
+      <span>Status: {actualCost > project.budget 
+        ? <span className="text-danger fw-bold">Over Budget</span> 
+        : <span className="text-success fw-bold">Within Budget</span>}
+      </span>
+    </div>
+
+    {isOwner && (
+      <div className="d-grid gap-2 mt-4">
+        <Link to={`/projects/${id}/expenditures/add`} className="btn btn-outline-success btn-sm">Add Expenditure</Link>
+        <Link to={`/projects/${id}/expenditures`} className="btn btn-outline-primary btn-sm">View Expenditures</Link>
+        <Link to={`/projects/${id}/report`} className="btn btn-outline-dark btn-sm">Project Report</Link>
+      </div>
+    )}
+  </div>
+</div>
+
 
   {/* RISKS & ISSUES - Relocated and Redesigned */}
   <div className="card mt-4 shadow border-warning">

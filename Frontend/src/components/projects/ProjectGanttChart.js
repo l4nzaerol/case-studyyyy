@@ -49,16 +49,24 @@ const ProjectGanttChart = ({ tasks }) => {
       </div>
       <div className="gantt-body">
         <div className="gantt-scroll">
-          <Gantt
-            tasks={ganttTasks}
-            viewMode={ViewMode.Day}
-            locale="en"
-            listCellWidth="220px"
-            barProgressColor="#0d6efd"
-            barBackgroundColor="#adb5bd"
-            fontSize="14"
-            columnWidth={60}
-          />
+        <Gantt
+  tasks={ganttTasks}
+  viewMode={ViewMode.Day}
+  locale="en"
+  listCellWidth="220px"
+  barProgressColor="#0d6efd"
+  barBackgroundColor="#adb5bd"
+  fontSize="14"
+  columnWidth={60}
+  listColumns={[
+    {
+      title: "Task", // 👈 Change column header here
+      width: "220px",
+      value: "name", // 👈 This tells it to show the task name
+    }
+  ]}
+/>
+
         </div>
       </div>
     </div>

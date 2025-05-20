@@ -9,7 +9,6 @@ const Login = ({ onLogin }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login", {
         method: "POST",
@@ -31,17 +30,58 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
       <div
-        className="card p-4 shadow-sm"
-        style={{ maxWidth: "400px", width: "100%" }}
+        style={{
+          width: "50%",
+          background: "linear-gradient(to bottom right,rgb(4, 105, 148),rgb(27, 87, 107),rgb(4, 88, 124))",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem",
+          color: "#ffffff",
+          position: "relative",
+          overflow: "hidden"
+        }}
       >
-        <h3 className="text-center mb-3">Welcome Back</h3>
-        <p className="text-center text-muted mb-4">Log in to your account</p>
+        <div style={{ textAlign: "center", zIndex: 1 }}>
+          <h2 style={{ fontSize: "2.5rem", fontWeight: 600 }}>WELCOME BACK!</h2>
+          <p style={{ fontSize: "1rem", marginTop: "1rem", opacity: 0.8 }}>
+            Streamline your project management and team collaboration efficiently.
+          </p>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            top: "-50%",
+            left: "-50%",
+            width: "200%",
+            height: "200%",
+            background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)",
+            animation: "rotate 20s linear infinite"
+          }}
+        ></div>
+      </div>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+      <div style={{ width: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f7fa", padding: "2rem" }}>
+        <form
+          onSubmit={handleLogin}
+          style={{
+            background: "#ffffff",
+            padding: "40px",
+            borderRadius: "20px",
+            width: "100%",
+            maxWidth: "420px",
+            boxShadow: "0 12px 30px rgba(0,0,0,0.1)",
+            color: "#2c3e50",
+            transition: "all 0.3s ease"
+          }}
+        >
+          <h3 className="text-center mb-3" style={{ color: "#2c5364", fontWeight: "600" }}>Klick Inc.</h3>
+          <p className="text-center text-muted mb-4">Log in to your account</p>
 
-        <form onSubmit={handleLogin}>
+          {error && <div className="alert alert-danger">{error}</div>}
+
           <div className="mb-3">
             <label>Email address</label>
             <input
@@ -50,6 +90,7 @@ const Login = ({ onLogin }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              style={{ marginBottom: "15px" }}
             />
           </div>
           <div className="mb-3">
@@ -60,16 +101,13 @@ const Login = ({ onLogin }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              style={{ marginBottom: "15px" }}
             />
           </div>
 
-          <div className="d-flex justify-content-between mb-3">
+          <div className="d-flex justify-content-between mb-3" style={{ fontSize: "14px" }}>
             <div className="form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="remember"
-              />
+              <input type="checkbox" className="form-check-input" id="remember" />
               <label className="form-check-label" htmlFor="remember">
                 Remember me
               </label>
@@ -77,14 +115,19 @@ const Login = ({ onLogin }) => {
             <button
               type="button"
               className="btn btn-link p-0"
+              style={{ color: "#2c5364" }}
               onClick={() => alert("Coming soon")}
             >
-              Forgot password?
+              Recover password
             </button>
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 mb-2">
-            Login
+          <button
+            type="submit"
+            className="btn btn-primary w-100 mb-2"
+            style={{ backgroundColor: "#2c5364", borderColor: "#2c5364" }}
+          >
+            SIGN IN
           </button>
 
           <div className="text-center text-muted mb-2">or</div>
@@ -93,11 +136,19 @@ const Login = ({ onLogin }) => {
             type="button"
             className="btn btn-outline-secondary w-100"
             onClick={() => navigate("/register")}
+            style={{ borderColor: "#2c5364", color: "#2c5364" }}
           >
             Create New Account
           </button>
         </form>
       </div>
+
+      <style>{`
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

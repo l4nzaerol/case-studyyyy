@@ -44,7 +44,7 @@ const ProjectList = () => {
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-dark">📁 My Projects</h2>
+        <h2 className="fw-bold text-dark">Projects</h2>
         <Link to="/projects/create" className="btn btn-outline-primary">
           <i className="bi bi-plus-lg me-2"></i> Create Project
         </Link>

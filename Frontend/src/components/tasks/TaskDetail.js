@@ -182,44 +182,60 @@ const TaskDetail = () => {
   if (!task) return <div className="alert alert-warning m-3">Task not found</div>;
 
   return (
-    <div className="container py-5">
-      <div className="bg-white rounded shadow p-4">
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4">
-          <div>
-            <h3 className="mb-2 text-primary">{task.title}</h3>
-            <p className="text-muted">{task.description || "No description provided"}</p>
-          </div>
-          <div>
-            <Link to={`/projects/${task.project_id}/tasks`} className="btn btn-outline-secondary me-2">
-              <i className="bi bi-arrow-left"></i> Back
+    <div className="container py-4">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Link to={`/projects/${task.project_id}/tasks`} className="text-decoration-none text-muted">
+          <i className="bi bi-arrow-left-circle me-2"></i>Back to Tasks
+        </Link>
+        {user && task.project?.owner_id === user.id && (
+          <div className="d-flex gap-2">
+            <Link to={`/tasks/${taskId}/edit`} className="btn btn-sm btn-outline-warning">
+              <i className="bi bi-pencil-square me-1"></i>Edit
             </Link>
-            {user && task.project?.owner_id === user.id && (
-              <>
-                <Link to={`/tasks/${taskId}/edit`} className="btn btn-outline-warning me-2">Edit</Link>
-                <button className="btn btn-outline-danger" onClick={handleDeleteTask}>Delete</button>
-              </>
-            )}
+            <button className="btn btn-sm btn-outline-danger" onClick={handleDeleteTask}>
+              <i className="bi bi-trash me-1"></i>Delete
+            </button>
           </div>
-        </div>
-
-        <div className="row g-4">
-          <div className="col-lg-6">
-            <ul className="list-group">
-              <li className="list-group-item"><strong>Project:</strong> {task.project?.name}</li>
-              <li className="list-group-item"><strong>Status:</strong> <span className={`badge bg-${getStatusBadge(task.status)}`}>{task.status.replace("_", " ")}</span></li>
-              <li className="list-group-item"><strong>Priority:</strong> <span className={`badge bg-${getPriorityBadge(task.priority)}`}>{task.priority}</span></li>
-              <li className="list-group-item"><strong>Assigned To:</strong> {task.assigned_user?.name || "Unassigned"}</li>
-              <li className="list-group-item"><strong>Due Date:</strong> {task.due_time ? new Date(task.due_time).toLocaleDateString() : "Not set"}</li>
-              <li className="list-group-item"><strong>Created:</strong> {new Date(task.created_at).toLocaleDateString()}</li>
-            </ul>
-
-            <div className="mt-4">
-              <h5>Update Status</h5>
-              <div className="btn-group w-100">
+        )}
+      </div>
+  
+      {/* Two-Column Layout */}
+      <div className="row g-4">
+        {/* Task Info */}
+        <div className="col-lg-6">
+          <section className="p-4 border rounded-4 shadow-sm h-100 bg-white">
+            <h3 className="text-dark mb-3 fw-semibold">{task.title}</h3>
+            <p className="text-muted mb-4">{task.description || <em>No description provided.</em>}</p>
+  
+            <div className="mb-4">
+              <h6 className="text-uppercase fw-bold small text-secondary mb-3">Task Details</h6>
+              <div className="row gy-2">
+                <div className="col-6"><strong>Project:</strong><br />{task.project?.name}</div>
+                <div className="col-6"><strong>Assigned:</strong><br />{task.assigned_user?.name || "Unassigned"}</div>
+                <div className="col-6"><strong>Due:</strong><br />{task.due_time ? new Date(task.due_time).toLocaleDateString() : "Not set"}</div>
+                <div className="col-6"><strong>Created:</strong><br />{new Date(task.created_at).toLocaleDateString()}</div>
+                <div className="col-6"><strong>Status:</strong><br />
+                  <span className={`badge bg-${getStatusBadge(task.status)}`}>
+                    {task.status.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="col-6"><strong>Priority:</strong><br />
+                  <span className={`badge bg-${getPriorityBadge(task.priority)}`}>
+                    {task.priority}
+                  </span>
+                </div>
+              </div>
+            </div>
+  
+            {/* Status Buttons */}
+            <div>
+              <h6 className="text-uppercase fw-bold small text-secondary mb-2">Update Status</h6>
+              <div className="d-flex flex-wrap gap-2">
                 {["todo", "in_progress", "review", "completed"].map((status) => (
                   <button
                     key={status}
-                    className={`btn ${task.status === status ? "btn-primary" : "btn-outline-primary"}`}
+                    className={`btn btn-sm ${task.status === status ? "btn-primary" : "btn-outline-primary"}`}
                     onClick={() => handleStatusChange(status)}
                   >
                     {status.replace("_", " ")}
@@ -227,36 +243,46 @@ const TaskDetail = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          <div className="col-lg-6">
-            <div className="mb-4">
-              <h5>Attachments</h5>
-              {fileError && <div className="alert alert-danger">{fileError}</div>}
+          </section>
+        </div>
+  
+        {/* Files and Comments */}
+        <div className="col-lg-6">
+          <div className="d-flex flex-column gap-4">
+  
+            {/* Files */}
+            <section className="p-4 border rounded-4 shadow-sm bg-white">
+              <h5 className="fw-bold mb-3">📎 Attachments</h5>
               <form onSubmit={handleFileUpload} className="input-group mb-3">
                 <input type="file" className="form-control" onChange={(e) => setFile(e.target.files[0])} />
-                <button type="submit" className="btn btn-outline-success">Upload</button>
+                <button className="btn btn-outline-success" type="submit">Upload</button>
               </form>
-              <ul className="list-group">
-                {files.length === 0 ? (
-                  <li className="list-group-item">No files uploaded.</li>
-                ) : (
-                  files.map((f) => (
-                    <li key={f.id} className="list-group-item d-flex justify-content-between">
+              {fileError && <div className="alert alert-danger">{fileError}</div>}
+              {files.length === 0 ? (
+                <p className="text-muted">No files uploaded yet.</p>
+              ) : (
+                <ul className="list-unstyled">
+                  {files.map((f) => (
+                    <li key={f.id} className="d-flex justify-content-between align-items-center border-bottom py-2">
                       <div>
-                        <strong>{f.filename}</strong><br />
-                        <small>Uploaded by {f.user?.name}</small>
+                        <strong>{f.filename}</strong>
+                        <div className="small text-muted">by {f.user?.name}</div>
                       </div>
-                      <button className="btn btn-sm btn-outline-secondary" onClick={() => handleDownload(f.id, f.filename)}>Download</button>
+                      <button
+                        className="btn btn-sm btn-outline-secondary"
+                        onClick={() => handleDownload(f.id, f.filename)}
+                      >
+                        <i className="bi bi-download"></i>
+                      </button>
                     </li>
-                  ))
-                )}
-              </ul>
-            </div>
-
-            <div>
-              <h5>Comments</h5>
-              {commentsError && <div className="alert alert-danger">{commentsError}</div>}
+                  ))}
+                </ul>
+              )}
+            </section>
+  
+            {/* Comments */}
+            <section className="p-4 border rounded-4 shadow-sm bg-white">
+              <h5 className="fw-bold mb-3">💬 Comments</h5>
               <form onSubmit={handleCommentSubmit} className="input-group mb-3">
                 <input
                   type="text"
@@ -267,25 +293,29 @@ const TaskDetail = () => {
                 />
                 <button className="btn btn-outline-primary" type="submit">Post</button>
               </form>
-              <ul className="list-group">
+              {commentsError && <div className="alert alert-danger">{commentsError}</div>}
+              <div style={{ maxHeight: 250, overflowY: "auto" }} className="small">
                 {comments.length === 0 ? (
-                  <li className="list-group-item">No comments yet.</li>
+                  <p className="text-muted">No comments yet.</p>
                 ) : (
-                  comments.map((comment) => (
-                    <li key={comment.id} className="list-group-item">
-                      <strong>{comment.user?.name || "Unknown User"}</strong><br />
-                      <small className="text-muted">{new Date(comment.created_at).toLocaleString()}</small>
-                      <p className="mb-0 mt-1">{comment.comment}</p>
-                    </li>
+                  comments.map((c) => (
+                    <div key={c.id} className="border-bottom mb-3 pb-2">
+                      <div className="fw-semibold">{c.user?.name || "Unknown"}</div>
+                      <div className="text-muted small">{new Date(c.created_at).toLocaleString()}</div>
+                      <div>{c.comment}</div>
+                    </div>
                   ))
                 )}
-              </ul>
-            </div>
+              </div>
+            </section>
+  
           </div>
         </div>
       </div>
     </div>
   );
+  
+  
 };
 
 const getStatusBadge = (status) => {

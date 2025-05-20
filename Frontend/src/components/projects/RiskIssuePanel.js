@@ -31,10 +31,8 @@ const RiskIssuePanel = ({ projectId, isOwner }) => {
         setLoading(false);
       }
     };
-  
     fetchData();
   }, [projectId]);
-  
 
   const fetchItems = async () => {
     try {
@@ -85,7 +83,12 @@ const RiskIssuePanel = ({ projectId, isOwner }) => {
       );
       setItems((prev) => [res.data, ...prev]);
       setShowModal(false);
-      setForm({ type: "issue", title: "", description: "", impact_level: "medium" });
+      setForm({
+        type: "issue",
+        title: "",
+        description: "",
+        impact_level: "medium",
+      });
     } catch (err) {
       alert(err.response?.data?.error || "Failed to submit.");
     }
@@ -108,19 +111,20 @@ const RiskIssuePanel = ({ projectId, isOwner }) => {
     return (
       <div
         ref={popoverRef}
-        className="position-absolute bg-light border rounded p-2 shadow"
-        style={{ zIndex: 1000 }}
+        className="position-absolute bg-white border rounded shadow p-2"
+        style={{ zIndex: 1000, minWidth: "150px" }}
       >
         <button
-          className="btn btn-sm btn-outline-primary"
+          className="btn btn-sm btn-outline-primary w-100"
           onClick={() => handleChangeStatus(item, nextStatus)}
         >
-          Change to "{nextStatus}"
+          Set {nextStatus}
         </button>
       </div>
     );
   };
 
+  // Separate the data for risks and issues
   const risks = items.filter((item) => item.type === "risk");
   const issues = items.filter((item) => item.type === "issue");
 
@@ -128,156 +132,177 @@ const RiskIssuePanel = ({ projectId, isOwner }) => {
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="card mt-4">
-      <div className="card-header d-flex justify-content-between align-items-center">
-        <h5 className="mb-0">Project Risks & Issues</h5>
-        <button className="btn btn-sm btn-primary" onClick={() => setShowModal(true)}>
-          Report
-        </button>
+    <div className="container my-4">
+      <div className="card shadow-sm">
+        <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 className="mb-0">Project Risks & Issues</h4>
+          <button className="btn btn-light btn-sm" onClick={() => setShowModal(true)}>
+            Report New
+          </button>
+        </div>
+        <div className="card-body">
+          <div className="row">
+            {/* Risks Column */}
+            <div className="col-md-6 mb-4">
+              <h5 className="border-bottom pb-2">Risks</h5>
+              {risks.length === 0 ? (
+                <p className="text-muted">No risks reported.</p>
+              ) : (
+                risks.map((risk) => (
+                  <div key={risk.id} className="card mb-3">
+                    <div className="card-body d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 className="card-title mb-1">{risk.title}</h6>
+                        <p className="card-text text-muted mb-1">{risk.description}</p>
+                        <small className="text-secondary">
+                          <strong>Impact:</strong> {risk.impact_level}
+                        </small>
+                      </div>
+                      <div className="text-end position-relative">
+                        <span
+                          className={`badge ${
+                            risk.status === "open"
+                              ? "bg-danger"
+                              : "bg-success"
+                          }`}
+                        >
+                          {risk.status.toUpperCase()}
+                        </span>
+                        {isOwner && (
+                          <button
+                            className="btn btn-link text-decoration-none ms-2"
+                            onClick={() =>
+                              setActivePopover(activePopover === risk.id ? null : risk.id)
+                            }
+                          >
+                            <small>Change Status</small>
+                          </button>
+                        )}
+                        {activePopover === risk.id && <StatusPopover item={risk} />}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            {/* Issues Column */}
+            <div className="col-md-6 mb-4">
+              <h5 className="border-bottom pb-2">Issues</h5>
+              {issues.length === 0 ? (
+                <p className="text-muted">No issues reported.</p>
+              ) : (
+                issues.map((issue) => (
+                  <div key={issue.id} className="card mb-3">
+                    <div className="card-body d-flex justify-content-between align-items-center">
+                      <div>
+                        <h6 className="card-title mb-1">{issue.title}</h6>
+                        <p className="card-text text-muted mb-1">{issue.description}</p>
+                        <small className="text-secondary">
+                          <strong>Impact:</strong> {issue.impact_level}
+                        </small>
+                      </div>
+                      <div className="text-end position-relative">
+                        <span
+                          className={`badge ${
+                            issue.status === "open"
+                              ? "bg-danger"
+                              : "bg-success"
+                          }`}
+                        >
+                          {issue.status.toUpperCase()}
+                        </span>
+                        <button
+                          className="btn btn-link text-decoration-none ms-2"
+                          onClick={() =>
+                            setActivePopover(activePopover === issue.id ? null : issue.id)
+                          }
+                        >
+                          <small>Change Status</small>
+                        </button>
+                        {activePopover === issue.id && <StatusPopover item={issue} />}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="card-footer text-muted text-end">
+          Updated just now
+        </div>
       </div>
-      <div className="card-body">
-        {/* RISK TABLE */}
-        <h6 className="mb-3">Risks</h6>
-        {risks.length === 0 ? (
-          <p className="text-muted">No risks reported.</p>
-        ) : (
-          <ul className="list-group mb-4">
-            {risks.map((risk) => (
-              <li
-                key={risk.id}
-                className="list-group-item position-relative d-flex justify-content-between align-items-start flex-column flex-md-row"
-              >
-                <div className="me-3">
-                  <strong>{risk.title}</strong>
-                  <p className="mb-1 text-muted">{risk.description}</p>
-                  <p className="mb-1">
-                    <small className="text-muted">
-                      <strong>Impact:</strong> {risk.impact_level}
-                    </small>
-                  </p>
-                </div>
-                <div className="text-end">
-                  <span
-                    className={`badge bg-${risk.status === "open" ? "danger" : "success"}`}
-                  >
-                    {risk.status}
-                  </span>
-                  {isOwner && (
-                    <button
-                      className="btn btn-sm btn-link ms-2"
-                      onClick={() =>
-                        setActivePopover(activePopover === risk.id ? null : risk.id)
-                      }
-                    >
-                      Change Status
-                    </button>
-                  )}
-                  {activePopover === risk.id && <StatusPopover item={risk} />}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
 
-        {/* ISSUE TABLE */}
-        <h6 className="mb-3">Issues</h6>
-        {issues.length === 0 ? (
-          <p className="text-muted">No issues reported.</p>
-        ) : (
-          <ul className="list-group">
-            {issues.map((issue) => (
-              <li
-                key={issue.id}
-                className="list-group-item position-relative d-flex justify-content-between align-items-start flex-column flex-md-row"
-              >
-                <div className="me-3">
-                  <strong>{issue.title}</strong>
-                  <p className="mb-1 text-muted">{issue.description}</p>
-                  <p className="mb-1">
-                    <small className="text-muted">
-                      <strong>Impact:</strong> {issue.impact_level}
-                    </small>
-                  </p>
-                </div>
-                <div className="text-end">
-                  <span
-                    className={`badge bg-${issue.status === "open" ? "danger" : "success"}`}
-                  >
-                    {issue.status}
-                  </span>
-                  <button
-                    className="btn btn-sm btn-link ms-2"
-                    onClick={() =>
-                      setActivePopover(activePopover === issue.id ? null : issue.id)
-                    }
-                  >
-                    Change Status
-                  </button>
-                  {activePopover === issue.id && <StatusPopover item={issue} />}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* MODAL */}
+      {/* Modal Section */}
       {showModal && (
-        <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Report Risk/Issue</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+        <div className="modal show fade d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow">
+              <div className="modal-header bg-secondary text-white">
+                <h5 className="modal-title">Report New Risk/Issue</h5>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white"
+                  onClick={() => setShowModal(false)}
+                ></button>
               </div>
               <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label">Type</label>
-                  <select
-                    className="form-select"
-                    name="type"
-                    value={form.type}
-                    onChange={handleInputChange}
-                    disabled={!isOwner}
-                  >
-                    <option value="issue">Issue</option>
-                    <option value="risk">Risk</option>
-                  </select>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Title</label>
-                  <input
-                    className="form-control"
-                    name="title"
-                    value={form.title}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Description</label>
-                  <textarea
-                    className="form-control"
-                    name="description"
-                    value={form.description}
-                    onChange={handleInputChange}
-                  ></textarea>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Impact Level</label>
-                  <select
-                    className="form-select"
-                    name="impact_level"
-                    value={form.impact_level}
-                    onChange={handleInputChange}
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                  </select>
-                </div>
+                <form>
+                  <div className="mb-3">
+                    <label className="form-label">Type</label>
+                    <select
+                      className="form-select"
+                      name="type"
+                      value={form.type}
+                      onChange={handleInputChange}
+                      disabled={!isOwner}
+                    >
+                      <option value="issue">Issue</option>
+                      <option value="risk">Risk</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Title</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="title"
+                      value={form.title}
+                      onChange={handleInputChange}
+                      placeholder="Enter title"
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea
+                      className="form-control"
+                      name="description"
+                      value={form.description}
+                      onChange={handleInputChange}
+                      placeholder="Enter details"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">Impact Level</label>
+                    <select
+                      className="form-select"
+                      name="impact_level"
+                      value={form.impact_level}
+                      onChange={handleInputChange}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </form>
               </div>
               <div className="modal-footer">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
                   Cancel
                 </button>
                 <button className="btn btn-primary" onClick={handleSubmit}>

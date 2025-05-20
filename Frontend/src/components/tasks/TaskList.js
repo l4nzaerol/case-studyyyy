@@ -60,7 +60,7 @@ const TaskList = () => {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="text-center">
-          <div className="spinner-border text-info" style={{ width: '3rem', height: '3rem' }} role="status" />
+          <div className="spinner-border text-info" role="status" />
           <p className="mt-3 text-muted">Loading Tasks...</p>
         </div>
       </div>
@@ -70,19 +70,19 @@ const TaskList = () => {
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container py-5">
+    <div className="container py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-dark">
-          {projectId ? `📋 Tasks for ${project?.name}` : "🧾 My Assigned Tasks"}
-        </h2>
+        <h4 className="text-dark fw-semibold">
+          {projectId ? ` Tasks for ${project?.name}` : "🧾 My Assigned Tasks"}
+        </h4>
         {projectId && (
           <div>
-            <Link to={`/projects/${projectId}`} className="btn btn-outline-secondary me-2">
-              <i className="bi bi-arrow-left-circle me-1"></i> Back to Project
+            <Link to={`/projects/${projectId}`} className="btn btn-sm btn-outline-dark me-2">
+              <i className="bi bi-arrow-left-circle"></i> Back
             </Link>
             {user && project && user.id === project.user_id && (
-              <Link to={`/projects/${projectId}/tasks/create`} className="btn btn-outline-primary">
-                <i className="bi bi-plus-circle me-1"></i> New Task
+              <Link to={`/projects/${projectId}/tasks/create`} className="btn btn-sm btn-dark">
+                <i className="bi bi-plus-circle"></i> New Task
               </Link>
             )}
           </div>
@@ -90,65 +90,48 @@ const TaskList = () => {
       </div>
 
       {tasks.length === 0 ? (
-        <div className="alert alert-info">No tasks found.</div>
+        <div className="alert alert-light border">No tasks found.</div>
       ) : (
-        <div className="table-responsive shadow-sm rounded">
-          <table className="table table-hover align-middle border rounded">
-            <thead className="table-light">
-              <tr className="text-muted">
-                <th>Title</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Due Date</th>
-                <th>Assigned To</th>
-                <th className="text-center"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task.id}>
-                  <td className="fw-semibold">{task.title}</td>
-                  <td>
-                    <span className={`badge rounded-pill bg-${getStatusBadge(task.status)}`}>
-                      {task.status.replace("_", " ")}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`badge bg-${getPriorityBadge(task.priority)} text-uppercase`}>
-                      {task.priority}
-                    </span>
-                  </td>
-                  <td>
-                    {task.due_time
-                      ? new Date(task.due_time).toLocaleDateString()
-                      : <span className="text-muted">Not set</span>}
-                  </td>
-                  <td>{task.assignedUser?.name || <em className="text-muted">Unassigned</em>}</td>
-                  <td className="text-center">
-                  <div className="d-flex justify-content-center gap-2 flex-wrap">
-  <Link to={`/tasks/${task.id}`} className="btn btn-outline-info btn-sm">
-    <i className="bi bi-eye me-1"></i> View
-  </Link>
-  {user && project && user.id === project.user_id && (
-    <>
-      <Link to={`/tasks/${task.id}/edit`} className="btn btn-outline-warning btn-sm">
-        <i className="bi bi-pencil-square me-1"></i> Edit
-      </Link>
-      <button
-        className="btn btn-outline-danger btn-sm"
-        onClick={() => handleDeleteTask(task.id)}
-      >
-        <i className="bi bi-trash me-1"></i> Delete
-      </button>
-    </>
-  )}
-</div>
-
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="list-group">
+          {tasks.map((task) => (
+            <div key={task.id} className="list-group-item list-group-item-action d-flex justify-content-between align-items-start py-3 border-bottom">
+              <div className="w-100">
+                <div className="d-flex justify-content-between">
+                  <strong className="text-dark">{task.title}</strong>
+                  <small className="text-muted">
+                    {task.due_time ? new Date(task.due_time).toLocaleDateString() : "No due date"}
+                  </small>
+                </div>
+                <div className="d-flex gap-2 mt-1 flex-wrap text-muted small">
+                  <span className={`badge bg-${getStatusBadge(task.status)}`}>
+                    {task.status.replace("_", " ")}
+                  </span>
+                  <span className={`badge bg-${getPriorityBadge(task.priority)}`}>
+                    {task.priority}
+                  </span>
+                  <span>
+                    <i className="bi bi-person-circle me-1"></i>
+                    {task.assignedUser?.name || <em>Unassigned</em>}
+                  </span>
+                </div>
+              </div>
+              <div className="d-flex gap-2 ms-3 flex-shrink-0">
+                <Link to={`/tasks/${task.id}`} className="btn btn-sm btn-outline-secondary">
+                  <i className="bi bi-eye"></i>
+                </Link>
+                {user && project && user.id === project.user_id && (
+                  <>
+                    <Link to={`/tasks/${task.id}/edit`} className="btn btn-sm btn-outline-warning">
+                      <i className="bi bi-pencil-square"></i>
+                    </Link>
+                    <button onClick={() => handleDeleteTask(task.id)} className="btn btn-sm btn-outline-danger">
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>

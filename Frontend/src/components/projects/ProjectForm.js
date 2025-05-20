@@ -104,7 +104,7 @@ const ProjectForm = () => {
       <div className="card shadow-lg border-0 rounded-4">
         <div className="card-header bg-gradient bg-primary text-white py-3 rounded-top-4">
           <h3 className="mb-0">
-            {isEditing ? "✏️ Edit Project" : "🆕 Create New Project"}
+            {isEditing ? " Edit Project" : "Create New Project"}
           </h3>
         </div>
         <div className="card-body p-4">

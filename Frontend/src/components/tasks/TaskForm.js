@@ -121,7 +121,7 @@ const TaskForm = () => {
   return (
     <div className="container py-5">
       <div className="mx-auto shadow rounded-4 p-4" style={{ maxWidth: "800px", backgroundColor: "#fdfdfd" }}>
-        <h3 className="text-center mb-4">{isEditing ? "✏️ Edit Task" : "📝 Create New Task"}</h3>
+        <h3 className="text-center mb-4">{isEditing ? " Edit Task" : " Create New Task"}</h3>
 
         {error && <div className="alert alert-danger">{error}</div>}
 

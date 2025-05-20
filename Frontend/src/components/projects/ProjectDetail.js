@@ -192,8 +192,8 @@ const ProjectDetail = () => {
 
           <div className="card shadow-sm mb-4">
             <div className="card-header bg-info text-white d-flex justify-content-between">
-              <span>Top Tasks</span>
-              <Link to={`/projects/${id}/tasks`} className="btn btn-sm btn-light">Manage Tasks</Link>
+              <span>Project Tasks</span>
+              <Link to={`/projects/${id}/tasks`} className="btn btn-sm btn-light">View Tasks</Link>
             </div>
             <div className="card-body">
               {tasks.length === 0 ? <p>No tasks available.</p> : (

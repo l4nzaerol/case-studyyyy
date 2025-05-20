@@ -101,7 +101,7 @@ const TaskList = () => {
                 <th>Priority</th>
                 <th>Due Date</th>
                 <th>Assigned To</th>
-                <th className="text-center">Actions</th>
+                <th className="text-center"></th>
               </tr>
             </thead>
             <tbody>
@@ -125,24 +125,25 @@ const TaskList = () => {
                   </td>
                   <td>{task.assignedUser?.name || <em className="text-muted">Unassigned</em>}</td>
                   <td className="text-center">
-                    <div className="btn-group btn-group-sm">
-                      <Link to={`/tasks/${task.id}`} className="btn btn-outline-info">
-                        <i className="bi bi-eye"> View Task </i>
-                      </Link>
-                      {user && project && user.id === project.user_id && (
-                        <>
-                          <Link to={`/tasks/${task.id}/edit`} className="btn btn-outline-warning">
-                            <i className=" bi bi-pencil-square"></i>
-                          </Link>
-                          <button
-                            className="btn btn-outline-danger"
-                            onClick={() => handleDeleteTask(task.id)}
-                          >
-                            <i className="bi bi-trash"></i>
-                          </button>
-                        </>
-                      )}
-                    </div>
+                  <div className="d-flex justify-content-center gap-2 flex-wrap">
+  <Link to={`/tasks/${task.id}`} className="btn btn-outline-info btn-sm">
+    <i className="bi bi-eye me-1"></i> View
+  </Link>
+  {user && project && user.id === project.user_id && (
+    <>
+      <Link to={`/tasks/${task.id}/edit`} className="btn btn-outline-warning btn-sm">
+        <i className="bi bi-pencil-square me-1"></i> Edit
+      </Link>
+      <button
+        className="btn btn-outline-danger btn-sm"
+        onClick={() => handleDeleteTask(task.id)}
+      >
+        <i className="bi bi-trash me-1"></i> Delete
+      </button>
+    </>
+  )}
+</div>
+
                   </td>
                 </tr>
               ))}

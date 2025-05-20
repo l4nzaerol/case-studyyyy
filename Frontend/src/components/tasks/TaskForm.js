@@ -31,14 +31,12 @@ const TaskForm = () => {
 
         let resolvedProjectId = projectId;
 
-        // If editing, fetch task first to get project_id and assigned info
         if (isEditing) {
           const taskResponse = await axios.get(
             `http://localhost:8000/api/tasks/${taskId}`,
             { headers }
           );
           const task = taskResponse.data.task;
-          console.log("Fetched task:", task);
 
           setFormData({
             title: task.title,
@@ -51,10 +49,9 @@ const TaskForm = () => {
             due_time: task.due_time ? task.due_time.slice(0, 16) : "",
           });
 
-          resolvedProjectId = task.project_id; // Use actual project_id from task
+          resolvedProjectId = task.project_id;
         }
 
-        // Fetch project members
         if (resolvedProjectId) {
           const membersResponse = await axios.get(
             `http://localhost:8000/api/projects/${resolvedProjectId}/members`,
@@ -63,7 +60,6 @@ const TaskForm = () => {
           setUsers(membersResponse.data.members);
         }
 
-        // Fetch all projects owned by the user
         const projectsResponse = await axios.get(
           "http://localhost:8000/api/projects",
           { headers }
@@ -105,196 +101,163 @@ const TaskForm = () => {
         },
       });
 
-      // Navigate back to the project's task list
       navigate(`/projects/${formData.project_id}/tasks`);
     } catch (err) {
       setError("Failed to save task");
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: "100vh" }}
-      >
+      <div className="d-flex justify-content-center align-items-center vh-100">
         <div className="text-center">
-          <div
-            className="spinner-border text-primary"
-            role="status"
-            style={{ width: "3rem", height: "3rem" }}
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <div className="mt-2">Loading Form...</div>
+          <div className="spinner-grow text-info" style={{ width: "3rem", height: "3rem" }}></div>
+          <p className="mt-2 fw-semibold text-info">Preparing your task form...</p>
         </div>
       </div>
     );
+  }
 
   return (
-    <div className="task-form">
-      <h2>{isEditing ? "Edit Task" : "Create New Task"}</h2>
+    <div className="container py-5">
+      <div className="mx-auto shadow rounded-4 p-4" style={{ maxWidth: "800px", backgroundColor: "#fdfdfd" }}>
+        <h3 className="text-center mb-4">{isEditing ? "✏️ Edit Task" : "📝 Create New Task"}</h3>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Task Title
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={3}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="project_id" className="form-label">
-            Project
-          </label>
-          <select
-            className="form-select"
-            id="project_id"
-            name="project_id"
-            value={formData.project_id}
-            onChange={handleChange}
-            required
-            disabled={!!projectId}
-          >
-            <option value="">Select Project</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="status" className="form-label">
-              Status
-            </label>
-            <select
-              className="form-select"
-              id="status"
-              name="status"
-              value={formData.status}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="form-label fw-bold">Task Title</label>
+            <input
+              type="text"
+              className="form-control rounded-pill px-4"
+              name="title"
+              value={formData.title}
               onChange={handleChange}
+              placeholder="Enter a title for the task"
               required
-              disabled={formData.status === "completed"}
-            >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="review">Review</option>
-              <option value="completed">Completed</option>
-            </select>
+            />
           </div>
 
-          <div className="col">
-            <label htmlFor="priority" className="form-label">
-              Priority
-            </label>
+          <div className="mb-4">
+            <label className="form-label fw-bold">Description</label>
+            <textarea
+              className="form-control rounded-3"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              placeholder="What needs to be done?"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label fw-bold">Project</label>
             <select
-              className="form-select"
-              id="priority"
-              name="priority"
-              value={formData.priority}
+              className="form-select rounded-pill px-3"
+              name="project_id"
+              value={formData.project_id}
               onChange={handleChange}
               required
+              disabled={!!projectId}
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="assigned_to" className="form-label">
-              Assign To
-            </label>
-            <select
-              className="form-select"
-              id="assigned_to"
-              name="assigned_to"
-              value={formData.assigned_to}
-              onChange={handleChange}
-            >
-              <option value="">Unassigned</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
+              <option value="">-- Select a Project --</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
                 </option>
               ))}
             </select>
           </div>
 
-          <div className="col">
-            <label htmlFor="start_time" className="form-label">
-              Start Time
-            </label>
-            <input
-              type="datetime-local"
-              className="form-control"
-              id="start_time"
-              name="start_time"
-              value={formData.start_time}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+          <div className="row g-4 mb-4">
+            <div className="col-md-6">
+              <label className="form-label fw-bold">Status</label>
+              <select
+                className="form-select rounded-pill"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                disabled={formData.status === "completed"}
+              >
+                <option value="todo">To Do</option>
+                <option value="in_progress">In Progress</option>
+                <option value="review">Review</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
 
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="due_time" className="form-label">
-              Due Time
-            </label>
+            <div className="col-md-6">
+              <label className="form-label fw-bold">Priority</label>
+              <select
+                className="form-select rounded-pill"
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="row g-4 mb-4">
+            <div className="col-md-6">
+              <label className="form-label fw-bold">Assign To</label>
+              <select
+                className="form-select rounded-pill"
+                name="assigned_to"
+                value={formData.assigned_to}
+                onChange={handleChange}
+              >
+                <option value="">Unassigned</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="col-md-6">
+              <label className="form-label fw-bold">Start Time</label>
+              <input
+                type="datetime-local"
+                className="form-control rounded-pill"
+                name="start_time"
+                value={formData.start_time}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label fw-bold">Due Time</label>
             <input
               type="datetime-local"
-              className="form-control"
-              id="due_time"
+              className="form-control rounded-pill"
               name="due_time"
               value={formData.due_time}
               onChange={handleChange}
             />
           </div>
-        </div>
 
-        <div className="d-flex gap-2">
-          <button type="submit" className="btn btn-primary">
-            {isEditing ? "Update Task" : "Create Task"}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => navigate(`/projects/${formData.project_id}/tasks`)}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+          <div className="d-flex justify-content-end gap-3 mt-4">
+            <button
+              type="button"
+              className="btn btn-outline-secondary rounded-pill px-4"
+              onClick={() => navigate(`/projects/${formData.project_id}/tasks`)}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn btn-success rounded-pill px-4">
+              {isEditing ? "Save Changes" : "Create Task"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
